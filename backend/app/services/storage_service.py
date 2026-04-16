@@ -67,9 +67,9 @@ class StorageService:
             await self.upload_file(str(local_file), blob_path, content_type=content_type)
 
     def blob_url(self, blob_path: str) -> str:
-        base_url = (
-            f"{self.client.primary_endpoint}/{self.container_name}/{blob_path}"
-        )
+        endpoint = self.client.primary_endpoint.rstrip("/")
+        normalized_blob_path = blob_path.lstrip("/")
+        base_url = f"{endpoint}/{self.container_name}/{normalized_blob_path}"
         if not self.settings.azure_use_signed_urls:
             return base_url
 

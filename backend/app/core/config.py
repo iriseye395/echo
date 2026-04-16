@@ -42,7 +42,7 @@ class Settings(BaseSettings):
 
     upload_tmp_dir: str = "/tmp/echo_uploads"
 
-    cors_origins: list[str] = ["*"]
+    cors_origins: list[str] = Field(default_factory=lambda: ["*"])
 
     @field_validator("cors_origins", mode="before")
     @classmethod

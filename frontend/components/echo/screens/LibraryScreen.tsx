@@ -1,8 +1,16 @@
 import { ChipTabs } from "@/components/echo/Chips";
 import { LibraryTile, UploadTile } from "@/components/echo/Cards";
-import { libraryCards, libraryTabs } from "@/lib/echo-data";
+import { SectionHeader } from "@/components/echo/SectionHeader";
+import { libraryCards, libraryTabs, type ArtworkItem } from "@/lib/echo-data";
 
-export function LibraryScreen() {
+type LibraryScreenProps = {
+  backendUploads?: ArtworkItem[];
+  backendConnected?: boolean;
+};
+
+export function LibraryScreen({ backendUploads = [], backendConnected = false }: LibraryScreenProps) {
+  const displayCards = backendUploads.length > 0 ? backendUploads : libraryCards;
+
   return (
     <div className="mx-auto max-w-[1240px] space-y-12 pb-8">
       <section className="pt-4 lg:pt-6">
@@ -12,11 +20,22 @@ export function LibraryScreen() {
         </div>
       </section>
 
-      <section className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
+      <section className="space-y-6">
+        <SectionHeader
+          title={backendConnected ? "Cloud Uploads" : "Saved Collections"}
+          subtitle={backendConnected ? "Pulled from FastAPI track service" : "Local curated collections"}
+        />
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
         <UploadTile />
-        {libraryCards.map((item) => (
-          <LibraryTile key={item.title} title={item.title} subtitle={item.subtitle} image={item.image} />
+        {displayCards.map((item, index) => (
+          <LibraryTile
+            key={item.id ?? `${item.title}-${item.subtitle}-${index}`}
+            title={item.title}
+            subtitle={item.subtitle}
+            image={item.image}
+          />
         ))}
+        </div>
       </section>
     </div>
   );

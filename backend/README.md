@@ -9,6 +9,7 @@ Production-oriented FastAPI backend for audio upload, HLS encoding, metadata man
 - Kafka job queue for encoding pipeline
 - Worker service with FFmpeg
 - Azure Blob Storage for HLS assets
+- Next.js frontend
 
 ## Run with Docker
 1. Copy environment template:
@@ -17,7 +18,9 @@ Production-oriented FastAPI backend for audio upload, HLS encoding, metadata man
    docker compose up --build
 3. API base URL:
    http://localhost:8000
-4. Open API docs:
+4. Frontend URL:
+   http://localhost:3000
+5. Open API docs:
    http://localhost:8000/docs
 
 ## Local development without Docker

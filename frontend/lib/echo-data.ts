@@ -1,6 +1,8 @@
 export type NavKey = "home" | "search" | "library" | "rooms";
 
 export type ArtworkItem = {
+  id?: string;
+  artist?: string;
   title: string;
   subtitle: string;
   image: string;

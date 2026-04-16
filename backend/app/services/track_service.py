@@ -113,4 +113,13 @@ class TrackService:
                 status_code=status.HTTP_409_CONFLICT,
                 detail="Track is not ready for playback",
             )
-        return {"track_id": track.id, "hls_url": track.master_playlist_url}
+
+        master_blob_path = f"tracks/{track.id}/master.m3u8"
+        if not await self.storage.blob_exists(master_blob_path):
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Track assets are missing. Re-upload or reprocess this track.",
+            )
+
+        dynamic_hls_url = self.storage.blob_url(master_blob_path)
+        return {"track_id": track.id, "hls_url": dynamic_hls_url}

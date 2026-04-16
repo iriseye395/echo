@@ -8,11 +8,19 @@ import { SectionHeader } from "@/components/echo/SectionHeader";
 import {
   newReleases,
   recentItems,
+  type ArtworkItem,
   topMixFeature,
   topMixSecondary,
 } from "@/lib/echo-data";
 
-export function HomeScreen() {
+type HomeScreenProps = {
+  backendRecentItems?: ArtworkItem[];
+  backendConnected?: boolean;
+};
+
+export function HomeScreen({ backendRecentItems = [], backendConnected = false }: HomeScreenProps) {
+  const displayRecentItems = backendRecentItems.length > 0 ? backendRecentItems : recentItems;
+
   return (
     <div className="mx-auto max-w-[1240px] space-y-14 pb-8">
       <section className="pt-5 lg:pt-8">
@@ -20,13 +28,31 @@ export function HomeScreen() {
         <p className="mt-4 max-w-xl text-sm text-[var(--on-surface-variant)]">
           Your curated sonic experience is ready.
         </p>
+        <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--secondary)]">
+          {backendConnected ? "Backend Sync Active" : "Preview Mode"}
+        </p>
       </section>
 
       <section className="space-y-6">
         <SectionHeader title="Recently Played" actionLabel="View All" />
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {recentItems.map((item) => (
-            <RecentItemCard key={item.title} title={item.title} subtitle={item.subtitle} image={item.image} />
+          {displayRecentItems.map((item, index) => (
+            <RecentItemCard
+              key={item.id ?? `${item.title}-${item.subtitle}-${index}`}
+              title={item.title}
+              subtitle={item.subtitle}
+              image={item.image}
+              playbackTrack={
+                item.id
+                  ? {
+                      trackId: item.id,
+                      title: item.title,
+                      artist: item.artist ?? item.subtitle.split(" • ")[0],
+                      image: item.image,
+                    }
+                  : undefined
+              }
+            />
           ))}
         </div>
       </section>

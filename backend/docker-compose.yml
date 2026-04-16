@@ -78,6 +78,21 @@ services:
       - kafka
       - azurite
 
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: echo-frontend
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
+      INTERNAL_API_BASE_URL: http://api:8000
+      ECHO_BACKEND_EMAIL: admin@gmail.com
+      ECHO_BACKEND_PASSWORD: admin
+    depends_on:
+      - api
+    ports:
+      - "3000:3000"
+
 volumes:
   postgres_data:
   azurite_data:

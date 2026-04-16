@@ -1,3 +1,4 @@
+import json
 from functools import lru_cache
 from typing import Literal
 
@@ -33,6 +34,7 @@ class Settings(BaseSettings):
         "BlobEndpoint=http://azurite:10000/devstoreaccount1;"
     )
     azure_blob_container: str = "audio-streaming"
+    azure_blob_public_read: bool = True
     azure_use_signed_urls: bool = False
     azure_signed_url_ttl_seconds: int = 3600
 
@@ -51,6 +53,15 @@ class Settings(BaseSettings):
             stripped = value.strip()
             if not stripped:
                 return ["*"]
+
+            if stripped.startswith("["):
+                try:
+                    parsed = json.loads(stripped)
+                    if isinstance(parsed, list):
+                        return [str(item).strip() for item in parsed if str(item).strip()]
+                except json.JSONDecodeError:
+                    pass
+
             return [item.strip() for item in stripped.split(",")]
         return value
 

@@ -23,7 +23,13 @@ class StorageService:
     async def ensure_container(self) -> None:
         container = self.client.get_container_client(self.container_name)
         if not await container.exists():
-            await container.create_container()
+            await container.create_container(
+                public_access="blob" if self.settings.azure_blob_public_read else None
+            )
+            return
+
+        if self.settings.azure_blob_public_read:
+            await container.set_container_access_policy(public_access="blob")
 
     async def upload_file(
         self,
@@ -66,6 +72,14 @@ class StorageService:
             content_type = _guess_content_type(local_file)
             await self.upload_file(str(local_file), blob_path, content_type=content_type)
 
+    async def blob_exists(self, blob_path: str) -> bool:
+        normalized_blob_path = blob_path.lstrip("/")
+        blob_client = self.client.get_blob_client(
+            container=self.container_name,
+            blob=normalized_blob_path,
+        )
+        return await blob_client.exists()
+
     def blob_url(self, blob_path: str) -> str:
         endpoint = self.client.primary_endpoint.rstrip("/")
         normalized_blob_path = blob_path.lstrip("/")
@@ -81,7 +95,7 @@ class StorageService:
         sas_token = generate_blob_sas(
             account_name=self.client.account_name,
             container_name=self.container_name,
-            blob_name=blob_path,
+            blob_name=normalized_blob_path,
             account_key=account_key,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.now(timezone.utc) + timedelta(seconds=self.settings.azure_signed_url_ttl_seconds),

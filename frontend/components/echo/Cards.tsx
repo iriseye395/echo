@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { usePlayback, type PlaybackTrack } from "@/components/echo/PlaybackProvider";
 import { DotsIcon, PlayIcon, PlusIcon } from "@/components/echo/icons";
 
 type ImageCardProps = {
@@ -7,7 +10,13 @@ type ImageCardProps = {
   image: string;
 };
 
-export function RecentItemCard({ title, subtitle, image }: ImageCardProps) {
+type RecentItemCardProps = ImageCardProps & {
+  playbackTrack?: PlaybackTrack;
+};
+
+export function RecentItemCard({ title, subtitle, image, playbackTrack }: RecentItemCardProps) {
+  const { playTrack } = usePlayback();
+
   return (
     <article className="group flex items-center gap-4 rounded-xl bg-[var(--surface-container-low)] p-0 pr-4">
       <Image src={image} alt={title} width={80} height={80} className="h-20 w-20 rounded-l-xl object-cover" />
@@ -17,6 +26,12 @@ export function RecentItemCard({ title, subtitle, image }: ImageCardProps) {
       </div>
       <button
         type="button"
+        onClick={() => {
+          if (playbackTrack) {
+            void playTrack(playbackTrack);
+          }
+        }}
+        disabled={!playbackTrack}
         className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--primary)] text-[var(--on-primary)] opacity-0 transition group-hover:opacity-100"
         aria-label={`Play ${title}`}
       >

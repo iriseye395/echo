@@ -1,0 +1,100 @@
+@import "tailwindcss";
+
+:root {
+  --surface: #0e0e0e;
+  --surface-container-lowest: #000000;
+  --surface-container-low: #131313;
+  --surface-container-high: #201f1f;
+  --surface-container-highest: #262626;
+  --surface-variant: #2f2e2e;
+  --surface-bright: #2c2c2c;
+  --on-surface: #f2f2f2;
+  --on-surface-variant: #adaaaa;
+  --outline-variant: #494847;
+  --primary: #ba9eff;
+  --primary-dim: #8455ef;
+  --on-primary: #39008c;
+  --secondary: #5af8fb;
+  --secondary-container: #00696b;
+  --on-secondary-container: #d9ffff;
+  --tertiary: #ff97b5;
+}
+
+@theme inline {
+  --color-background: var(--surface);
+  --color-foreground: var(--on-surface);
+  --font-sans: var(--font-inter);
+}
+
+body {
+  background: var(--surface);
+  color: var(--on-surface);
+  font-family: var(--font-inter), sans-serif;
+}
+
+.font-display {
+  font-family: var(--font-jakarta), sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.echo-glass {
+  background: color-mix(in srgb, var(--surface-container-low) 80%, transparent);
+  backdrop-filter: blur(32px);
+}
+
+.echo-header-glass {
+  background: color-mix(in srgb, var(--surface-container-low) 70%, transparent);
+  backdrop-filter: blur(12px);
+}
+
+.echo-player-glass {
+  background: color-mix(in srgb, var(--surface-container-low) 80%, transparent);
+  backdrop-filter: blur(40px);
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.4);
+}
+
+.echo-range {
+  width: 100%;
+  appearance: none;
+  height: 4px;
+  border-radius: 9999px;
+  background: linear-gradient(
+    to right,
+    var(--secondary) 0%,
+    var(--secondary) var(--value, 35%),
+    var(--surface-variant) var(--value, 35%),
+    var(--surface-variant) 100%
+  );
+}
+
+.echo-range::-webkit-slider-thumb {
+  appearance: none;
+  height: 12px;
+  width: 12px;
+  border-radius: 9999px;
+  background: var(--secondary);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--secondary) 70%, transparent);
+  opacity: 0;
+  transition: opacity 160ms ease;
+}
+
+.echo-range:hover::-webkit-slider-thumb,
+.echo-range:focus-visible::-webkit-slider-thumb {
+  opacity: 1;
+}
+
+.echo-range::-moz-range-thumb {
+  height: 12px;
+  width: 12px;
+  border: 0;
+  border-radius: 9999px;
+  background: var(--secondary);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--secondary) 70%, transparent);
+  opacity: 0;
+  transition: opacity 160ms ease;
+}
+
+.echo-range:hover::-moz-range-thumb,
+.echo-range:focus-visible::-moz-range-thumb {
+  opacity: 1;
+}

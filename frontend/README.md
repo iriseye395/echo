@@ -1,23 +1,3 @@
-# ECHO Monorepo
-
-This repository is organized by runtime layer:
-
-- frontend: Next.js UI application
-- backend: FastAPI streaming backend and worker stack
-
-## Frontend
-
-1. cd frontend
-2. npm install
-3. npm run dev
-
-## Backend
-
-1. cd backend
-2. Copy .env.example to .env
-3. docker compose up --build
-
-Backend docs are in backend/README.md.
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started

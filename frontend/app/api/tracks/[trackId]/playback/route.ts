@@ -27,11 +27,12 @@ export async function GET(
 ) {
   const { trackId } = await params;
   const result = await fetchBackendTrackPlayback(trackId);
+  console.log("Fetched playback info for track", trackId, result);
 
   if (!result.connected || !result.playback) {
     return NextResponse.json(
-      { detail: "Unable to fetch playback URL" },
-      { status: 502 },
+      { detail: result.detail || "Unable to fetch playback URL" },
+      { status: result.statusCode || 502 },
     );
   }
 

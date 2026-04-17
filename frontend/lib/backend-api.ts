@@ -30,6 +30,10 @@ export type BackendPlaybackResponse = {
   hls_url: string;
 };
 
+type BackendErrorResponse = {
+  detail?: string;
+};
+
 const getServiceToken = cache(async (): Promise<string | null> => {
   const body = new URLSearchParams({
     username: SERVICE_EMAIL,
@@ -87,10 +91,20 @@ export async function fetchBackendTracks(): Promise<{
 
 export async function fetchBackendTrackPlayback(
   trackId: string,
-): Promise<{ connected: boolean; playback: BackendPlaybackResponse | null }> {
+): Promise<{
+  connected: boolean;
+  playback: BackendPlaybackResponse | null;
+  statusCode: number;
+  detail: string;
+}> {
   const token = await getServiceToken();
   if (!token) {
-    return { connected: false, playback: null };
+    return {
+      connected: false,
+      playback: null,
+      statusCode: 401,
+      detail: "Unable to authenticate with backend service",
+    };
   }
 
   try {
@@ -102,13 +116,38 @@ export async function fetchBackendTrackPlayback(
     });
 
     if (!res.ok) {
-      return { connected: false, playback: null };
+      let detail = "Unable to fetch playback URL";
+      try {
+        const body = (await res.json()) as BackendErrorResponse;
+        if (body.detail) {
+          detail = body.detail;
+        }
+      } catch {
+        // Ignore non-JSON bodies.
+      }
+
+      return {
+        connected: false,
+        playback: null,
+        statusCode: res.status,
+        detail,
+      };
     }
 
     const playback = (await res.json()) as BackendPlaybackResponse;
-    return { connected: true, playback };
+    return {
+      connected: true,
+      playback,
+      statusCode: 200,
+      detail: "",
+    };
   } catch {
-    return { connected: false, playback: null };
+    return {
+      connected: false,
+      playback: null,
+      statusCode: 502,
+      detail: "Backend playback service is unreachable",
+    };
   }
 }
 

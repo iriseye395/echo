@@ -29,7 +29,7 @@ class StorageService:
             return
 
         if self.settings.azure_blob_public_read:
-            await container.set_container_access_policy(public_access="blob")
+            await container.set_container_access_policy(signed_identifiers={}, public_access="blob")
 
     async def upload_file(
         self,
@@ -61,6 +61,7 @@ class StorageService:
         out_path.parent.mkdir(parents=True, exist_ok=True)
         async with aiofiles.open(out_path, "wb") as file_handle:
             await file_handle.write(data)
+
 
     async def upload_directory(self, local_dir: str, blob_prefix: str) -> None:
         base_path = Path(local_dir)
